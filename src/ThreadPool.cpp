@@ -13,15 +13,23 @@ cm::ThreadPool::ThreadPool() : poolMode_(cm::PoolMode::MODE_FIXED),
 cm::ThreadPool::~ThreadPool() = default;
 
 void cm::ThreadPool::setMode(const cm::PoolMode &mode) {
-	poolMode_ = mode;
+	this->poolMode_ = mode;
 }
 
 void cm::ThreadPool::setTaskQueueMaxHold(const std::size_t size) {
 	this->taskQueueMaxHold_ = size;
 }
 
-void cm::ThreadPool::submitTask(const std::shared_ptr<Task> &) {
-
+bool cm::ThreadPool::submitTask(const std::shared_ptr<Task> &ptr) {
+	std::unique_lock<std::mutex> lock{taskQueueMtx_};
+	if (!notFull_.wait_for(lock, std::chrono::seconds(1), [&] { return taskQueue_.size() < taskQueueMaxHold_; })) {
+		std::cerr << "task queue is full, submit task fail." << std::endl;
+		return false;
+	}
+	taskQueue_.emplace(ptr);
+	++taskSize_;
+	notEmpty_.notify_all();
+	return true;
 }
 
 void cm::ThreadPool::start(const std::size_t size) {

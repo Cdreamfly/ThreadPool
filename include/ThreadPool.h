@@ -48,7 +48,7 @@ namespace cm {
 		//设置任务队列数量阈值
 		void setTaskQueueMaxHold(std::size_t);
 
-		void submitTask(const std::shared_ptr<Task> &);
+		bool submitTask(const std::shared_ptr<Task> &);
 
 		//开启线程池
 		void start(std::size_t size = std::thread::hardware_concurrency());
