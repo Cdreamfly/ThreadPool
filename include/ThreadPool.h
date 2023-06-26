@@ -1,5 +1,5 @@
 #pragma once
-
+#include <functional>
 #include <vector>
 #include <queue>
 #include <memory>
@@ -24,11 +24,15 @@ namespace cm {
 	class Thread {
 	public:
 		using ThreadFunc = std::function<void()>;
-		explicit Thread(const ThreadFunc&);
+
+		explicit Thread(ThreadFunc);
+
 		virtual ~Thread();
+
 		void start();
+
 	private:
-		ThreadFunc  func_;
+		ThreadFunc func_;
 	};
 
 	class ThreadPool {
@@ -47,8 +51,10 @@ namespace cm {
 
 		//开启线程池
 		void start(std::size_t size = std::thread::hardware_concurrency());
+
 	private:
-		void threadFunc();
+		static void threadFunc();
+
 	private:
 		PoolMode poolMode_{};             //当前线程池的工作模式
 		std::vector<Thread *> threads_;  //线程列表

@@ -1,4 +1,6 @@
-#include <functional>
+
+#include <utility>
+#include <iostream>
 #include "ThreadPool.h"
 
 const std::size_t TASK_MAX_THREAD_HOLD = 1024;
@@ -33,15 +35,15 @@ void cm::ThreadPool::start(const std::size_t size) {
 }
 
 void cm::ThreadPool::threadFunc() {
-
+	std::cout << "begin thread func" << std::endl;
+	std::cout << "id:" << std::this_thread::get_id() << std::endl;
+	std::cout << "end thread func" << std::endl;
 }
 
 void cm::Thread::start() {
-
+	std::thread([&] { func_(); }).detach();
 }
 
-cm::Thread::Thread(const cm::Thread::ThreadFunc &func) {
-	this->func_ = func;
-}
+cm::Thread::Thread(cm::Thread::ThreadFunc func) : func_(std::move(func)) {}
 
 cm::Thread::~Thread() = default;
