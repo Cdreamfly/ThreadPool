@@ -1,4 +1,5 @@
 #pragma once
+
 #include <functional>
 #include <vector>
 #include <queue>
@@ -57,7 +58,7 @@ namespace cm {
 
 	private:
 		PoolMode poolMode_{};             //当前线程池的工作模式
-		std::vector<Thread *> threads_;  //线程列表
+		std::vector<std::unique_ptr<Thread>> threads_;  //线程列表
 		std::size_t initThreadSize_{};    //初始线程数量
 		std::queue<std::shared_ptr<Task>> taskQueue_;    //任务队列
 		std::atomic_uint taskSize_{};     //任务数量

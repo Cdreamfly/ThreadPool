@@ -27,7 +27,7 @@ void cm::ThreadPool::submitTask(const std::shared_ptr<Task> &) {
 void cm::ThreadPool::start(const std::size_t size) {
 	this->initThreadSize_ = size;
 	for (int i = 0; i < initThreadSize_; ++i) {
-		threads_.emplace_back(new Thread([this] { threadFunc(); }));
+		threads_.emplace_back(std::make_unique<Thread>([this] { threadFunc(); }));
 	}
 	for (int i = 0; i < initThreadSize_; ++i) {
 		threads_[i]->start();
