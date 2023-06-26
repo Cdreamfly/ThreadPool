@@ -43,9 +43,22 @@ void cm::ThreadPool::start(const std::size_t size) {
 }
 
 void cm::ThreadPool::threadFunc() {
-	std::cout << "begin thread func" << std::endl;
-	std::cout << "id:" << std::this_thread::get_id() << std::endl;
-	std::cout << "end thread func" << std::endl;
+	while (true) {
+		std::shared_ptr<Task> task;
+		std::unique_lock<std::mutex> lock{taskQueueMtx_};
+		{
+			notEmpty_.wait(lock, [&] { return !taskQueue_.empty(); });
+			task = taskQueue_.front();
+			taskQueue_.pop();
+			--taskSize_;
+			//如果不为空，就继续消费
+			if (!taskQueue_.empty()) { notEmpty_.notify_all(); }
+			notFull_.notify_all();
+		}
+		if (task != nullptr) {
+			task->run();
+		}
+	}
 }
 
 void cm::Thread::start() {

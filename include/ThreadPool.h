@@ -15,6 +15,8 @@ namespace cm {
 	public:
 		//自动逸任务类型，从Task继承，重写run方法，实现自定义任务处理
 		virtual void run() = 0;
+
+		virtual ~Task() = default;
 	};
 
 	enum class PoolMode {
@@ -54,7 +56,7 @@ namespace cm {
 		void start(std::size_t size = std::thread::hardware_concurrency());
 
 	private:
-		static void threadFunc();
+		void threadFunc();
 
 	private:
 		PoolMode poolMode_{};             //当前线程池的工作模式
