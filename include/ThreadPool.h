@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Noncopyable.hpp"
+
 #include <functional>
 #include <vector>
 #include <queue>
@@ -10,6 +12,35 @@
 #include <thread>
 
 namespace cm {
+
+	class Any : private noncopyable {
+	public:
+		template<typename T>
+		explicit Any(T t):base_(std::make_unique<Base>(t)) {}
+
+		template<typename T>
+		T cast_() {
+			return dynamic_cast<Data <T> *>(base_.get())->data_;
+		}
+
+	private:
+		class Base {
+		public:
+			virtual ~Base() = default;
+		};
+
+		template<typename T>
+		class Data : public Base {
+		public:
+			explicit Data(T t) : data_(t) {}
+
+		public:
+			T data_;
+		};
+
+	private:
+		std::unique_ptr<Base> base_;
+	};
 
 	class Task {
 	public:

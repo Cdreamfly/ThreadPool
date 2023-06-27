@@ -12,8 +12,13 @@ public:
 int main() {
 	MyTask task;
 	cm::ThreadPool pool;
+	pool.start(4);
 	pool.submitTask(std::make_shared<MyTask>());
-	pool.start();
+	pool.submitTask(std::make_shared<MyTask>());
+	pool.submitTask(std::make_shared<MyTask>());
+	pool.submitTask(std::make_shared<MyTask>());
+	pool.submitTask(std::make_shared<MyTask>());
+
 	std::cin.get();
 	return 0;
 }
