@@ -18,7 +18,6 @@ int main() {
 	pool.submitTask(std::make_shared<MyTask>());
 	pool.submitTask(std::make_shared<MyTask>());
 	pool.submitTask(std::make_shared<MyTask>());
-
 	std::cin.get();
 	return 0;
 }
