@@ -12,6 +12,29 @@
 #include <thread>
 
 namespace cm {
+	class Semaphore {
+	public:
+		Semaphore() : resLimit_(0) {}
+
+		~Semaphore() = default;
+
+		void wait() {
+			std::unique_lock<std::mutex> lock{mtx_};
+			cond_.wait(lock, [&] { return resLimit_ > 0; });
+			--resLimit_;
+		}
+
+		void post() {
+			std::unique_lock<std::mutex> lock{mtx_};
+			++resLimit_;
+			cond_.notify_all();
+		}
+
+	private:
+		std::size_t resLimit_;
+		std::mutex mtx_;
+		std::condition_variable cond_;
+	};
 
 	class Any : private noncopyable {
 	public:
